@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  payment-service-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - go-mod-cache:/go/pkg/mod
+    environment:
+      - PORT=8080
+      - ENV=development
+      - CGO_ENABLED=0
+    working_dir: /app
+    command: ["air", "-c", ".air.toml"]
+    restart: unless-stopped
+
+volumes:
+  go-mod-cache:

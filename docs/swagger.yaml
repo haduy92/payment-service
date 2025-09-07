@@ -1,0 +1,87 @@
+basePath: /
+definitions:
+  usecase.PaymentRequest:
+    properties:
+      amount:
+        description: Payment amount (must be greater than 0)
+        example: 99.99
+        type: number
+      transaction_id:
+        description: Unique transaction ID for idempotency
+        example: txn-456
+        type: string
+      user_id:
+        description: User ID for the payment
+        example: user123
+        type: string
+    required:
+    - amount
+    - transaction_id
+    - user_id
+    type: object
+  usecase.PaymentResponse:
+    properties:
+      amount:
+        description: Payment amount
+        example: 99.99
+        type: number
+      message:
+        description: Status message
+        example: Payment processed successfully
+        type: string
+      status:
+        description: Payment status (success, failed)
+        example: success
+        type: string
+      transaction_id:
+        description: Transaction ID
+        example: txn-456
+        type: string
+      user_id:
+        description: User ID
+        example: user123
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Payment Service
+  description: A Go-based payment service implementing clean architecture with idempotent
+    payment processing
+  license:
+    name: MIT
+  title: Payment Service API
+  version: "1.0"
+paths:
+  /pay:
+    post:
+      consumes:
+      - application/json
+      description: Processes a payment request with idempotency support. Retrying
+        the same transaction_id will not charge twice.
+      parameters:
+      - description: Payment request
+        in: body
+        name: payment
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.PaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment processed successfully
+          schema:
+            $ref: '#/definitions/usecase.PaymentResponse'
+        "400":
+          description: Bad request - validation error
+          schema:
+            $ref: '#/definitions/usecase.PaymentResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/usecase.PaymentResponse'
+      summary: Process Payment
+      tags:
+      - Payments
+swagger: "2.0"

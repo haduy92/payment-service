@@ -1,0 +1,24 @@
+# Development Dockerfile with hot reloading
+FROM golang:1.23-alpine
+
+# Install air for hot reloading and git for dependencies
+RUN go install github.com/cosmtrek/air@latest
+RUN apk add --no-cache git
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Install swag for generating documentation
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+# Expose port
+EXPOSE 8080
+
+# Command will be overridden by docker-compose
+CMD ["air", "-c", ".air.toml"]

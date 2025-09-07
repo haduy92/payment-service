@@ -1,0 +1,62 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+main
+bin/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go workspace file
+go.work
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+LICENSE
+docs/
+
+# CI/CD
+.github/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+
+# Logs
+*.log
+
+# Static files (if not needed in container)
+static/
+
+# Setup scripts
+setup.sh
+setup.ps1
+
+# Make
+Makefile
