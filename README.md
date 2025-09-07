@@ -16,8 +16,8 @@ A Go-based payment service implementing clean architecture with idempotent payme
 This project follows clean architecture principles with the following organized structure:
 
 ### Core Application
-- `cmd/server/` - Payment service application entry point - Part 1
-- `cmd/worker/` - Worker pool demonstration program - Part 2
+- `cmd/server/` - 1. Payment service application entry point
+- `cmd/worker/` - 2. Worker pool demonstration program
 - `internal/` - Internal application code (entities, use cases, repositories, handlers)
 - `docs/` - Generated API documentation
 - `api/` - OpenAPI specifications
