@@ -8,8 +8,10 @@ show_help() {
     echo ""
     echo "Basic commands:"
     echo "  ./scripts/build/build.sh help          - Show this help message"
-    echo "  ./scripts/build/build.sh build         - Build the application"
-    echo "  ./scripts/build/build.sh run           - Run the application"
+    echo "  ./scripts/build/build.sh build         - Build the payment service (default)"
+    echo "  ./scripts/build/build.sh build-worker  - Build the worker pool demo"
+    echo "  ./scripts/build/build.sh run           - Run the payment service (default)"
+    echo "  ./scripts/build/build.sh run-worker    - Run the worker pool demo"
     echo "  ./scripts/build/build.sh test          - Run tests"
     echo "  ./scripts/build/build.sh test-coverage - Run tests with coverage report"
     echo ""
@@ -36,18 +38,38 @@ show_help() {
 }
 
 build_app() {
-    echo "🔨 Building the application..."
+    echo "🔨 Building the payment service..."
     mkdir -p bin
     go build -o bin/payment-service cmd/server/main.go
     if [ $? -eq 0 ]; then
-        echo "✅ Build completed successfully!"
+        echo "✅ Payment service build completed successfully!"
     else
-        echo "❌ Build failed!"
+        echo "❌ Payment service build failed!"
+    fi
+}
+
+build_worker() {
+    echo "🔨 Building the worker pool demo..."
+    mkdir -p bin
+    go build -o bin/worker-pool cmd/worker/main.go
+    if [ $? -eq 0 ]; then
+        echo "✅ Worker pool demo build completed successfully!"
+    else
+        echo "❌ Worker pool demo build failed!"
     fi
 }
 
 run_app() {
-    echo "🚀 Running the application..."
+    echo "🚀 Running the payment service..."
+    echo "API will be available at: http://localhost:8080"
+    echo "API documentation: http://localhost:8080/swagger/"
+    go run cmd/server/main.go
+}
+
+run_worker() {
+    echo "🚀 Running the worker pool demo..."
+    go run cmd/worker/main.go
+}
     go run cmd/server/main.go
 }
 
@@ -155,7 +177,9 @@ clean_artifacts() {
 case "${1:-help}" in
     "help") show_help ;;
     "build") build_app ;;
+    "build-worker") build_worker ;;
     "run") run_app ;;
+    "run-worker") run_worker ;;
     "test") test_app ;;
     "test-coverage") test_coverage ;;
     "docs") generate_docs ;;

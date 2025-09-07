@@ -15,8 +15,10 @@ function Show-Help {
     Write-Host ""
     Write-Host "Basic commands:" -ForegroundColor Blue
     Write-Host "  .\scripts\build\build.ps1 help          - Show this help message"
-    Write-Host "  .\scripts\build\build.ps1 build         - Build the application"
-    Write-Host "  .\scripts\build\build.ps1 run           - Run the application"
+    Write-Host "  .\scripts\build\build.ps1 build         - Build the payment service (default)"
+    Write-Host "  .\scripts\build\build.ps1 build-worker  - Build the worker pool demo"
+    Write-Host "  .\scripts\build\build.ps1 run           - Run the payment service (default)"
+    Write-Host "  .\scripts\build\build.ps1 run-worker    - Run the worker pool demo"
     Write-Host "  .\scripts\build\build.ps1 test          - Run tests"
     Write-Host "  .\scripts\build\build.ps1 test-coverage - Run tests with coverage report"
     Write-Host ""
@@ -43,19 +45,37 @@ function Show-Help {
 }
 
 function Build-App {
-    Write-Host "🔨 Building the application..." -ForegroundColor Blue
+    Write-Host "🔨 Building the payment service..." -ForegroundColor Blue
     New-Item -ItemType Directory -Force -Path "bin" | Out-Null
     go build -o bin/payment-service.exe cmd/server/main.go
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "✅ Build completed successfully!" -ForegroundColor Green
+        Write-Host "✅ Payment service build completed successfully!" -ForegroundColor Green
     } else {
-        Write-Host "❌ Build failed!" -ForegroundColor Red
+        Write-Host "❌ Payment service build failed!" -ForegroundColor Red
+    }
+}
+
+function Build-Worker {
+    Write-Host "🔨 Building the worker pool demo..." -ForegroundColor Blue
+    New-Item -ItemType Directory -Force -Path "bin" | Out-Null
+    go build -o bin/worker-pool.exe cmd/worker/main.go
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "✅ Worker pool demo build completed successfully!" -ForegroundColor Green
+    } else {
+        Write-Host "❌ Worker pool demo build failed!" -ForegroundColor Red
     }
 }
 
 function Run-App {
-    Write-Host "🚀 Running the application..." -ForegroundColor Blue
+    Write-Host "🚀 Running the payment service..." -ForegroundColor Blue
+    Write-Host "API will be available at: http://localhost:8080" -ForegroundColor Green
+    Write-Host "API documentation: http://localhost:8080/swagger/" -ForegroundColor Green
     go run cmd/server/main.go
+}
+
+function Run-Worker {
+    Write-Host "🚀 Running the worker pool demo..." -ForegroundColor Blue
+    go run cmd/worker/main.go
 }
 
 function Test-App {
@@ -164,7 +184,9 @@ function Clean-Artifacts {
 switch ($Command.ToLower()) {
     "help" { Show-Help }
     "build" { Build-App }
+    "build-worker" { Build-Worker }
     "run" { Run-App }
+    "run-worker" { Run-Worker }
     "test" { Test-App }
     "test-coverage" { Test-Coverage }
     "docs" { Generate-Docs }

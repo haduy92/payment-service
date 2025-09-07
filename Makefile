@@ -1,17 +1,27 @@
 # Payment Service Makefile
 
-.PHONY: help build run test clean docs docker docker-dev docker-clean
+.PHONY: help build build-worker run run-worker test clean docs docker docker-dev docker-clean
 
 # Default target
 help: ## Show this help message
 	@echo "Available commands:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-build: ## Build the application
+build: ## Build the payment service (default)
+	@mkdir -p bin
 	go build -o bin/payment-service cmd/server/main.go
 
-run: ## Run the application
+build-worker: ## Build the worker pool demo
+	@mkdir -p bin
+	go build -o bin/worker-pool cmd/worker/main.go
+
+run: ## Run the payment service (default)
+	@echo "API will be available at: http://localhost:8080"
+	@echo "API documentation: http://localhost:8080/swagger/"
 	go run cmd/server/main.go
+
+run-worker: ## Run the worker pool demo
+	go run cmd/worker/main.go
 
 test: ## Run tests
 	go test -v ./...

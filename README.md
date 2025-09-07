@@ -1,6 +1,6 @@
 # Payment Service
 
-A Go-based payment service implementing clean architecture with idempotent payment processing.
+A Go-based payment service implementing clean architecture with idempotent payment processing, plus a worker pool demonstration.
 
 ## Features
 
@@ -9,13 +9,15 @@ A Go-based payment service implementing clean architecture with idempotent payme
 - In-memory transaction storage
 - Clean architecture pattern
 - Comprehensive unit tests
+- **Worker Pool Demo**: Demonstrates concurrent task processing with limited workers
 
 ## Project Structure
 
 This project follows clean architecture principles with the following organized structure:
 
 ### Core Application
-- `cmd/server/` - Application entry point
+- `cmd/server/` - Payment service application entry point - Part 1
+- `cmd/worker/` - Worker pool demonstration program - Part 2
 - `internal/` - Internal application code (entities, use cases, repositories, handlers)
 - `docs/` - Generated API documentation
 - `api/` - OpenAPI specifications
@@ -41,8 +43,10 @@ For ease of use, convenience scripts are provided in the root directory:
 ```
 payment-service/
 ├── cmd/
-│   └── server/
-│       └── main.go                 # Application entry point
+│   ├── server/
+│   │   └── main.go                 # Payment service entry point
+│   └── worker/
+│       └── main.go                 # Worker pool demo entry point
 ├── internal/
 │   ├── entity/
 │   │   └── payment.go              # Business entities
@@ -112,6 +116,61 @@ Health check endpoint.
   "service": "payment-service"
 }
 ```
+
+## Worker Pool Demo
+
+This project includes a worker pool demonstration program that showcases concurrent task processing in Go.
+
+### Features
+- **Concurrent Processing**: 100 tasks processed concurrently
+- **Limited Workers**: Only 5 workers run simultaneously 
+- **Ordered Results**: All results are collected and displayed in original order
+- **Task Simulation**: Each task squares a number with simulated processing time
+
+### Running the Worker Pool Demo
+
+```bash
+# Using Make (Linux/macOS)
+make run-worker
+
+# Using PowerShell script (Windows)
+.\scripts\build\build.ps1 run-worker
+
+# Using batch script (Windows)
+scripts\build\build.bat run-worker
+
+# Using shell script (Linux/macOS)
+./scripts/build/build.sh run-worker
+
+# Using direct Go command (all platforms)
+go run cmd/worker/main.go
+```
+
+### Building the Worker Pool Demo
+
+```bash
+# Using Make (Linux/macOS)
+make build-worker
+
+# Using PowerShell script (Windows)
+.\scripts\build\build.ps1 build-worker
+
+# Using batch script (Windows)
+scripts\build\build.bat build-worker
+
+# Using shell script (Linux/macOS)
+./scripts/build/build.sh build-worker
+
+# Using direct Go command (all platforms)
+go build -o bin/worker-pool cmd/worker/main.go
+```
+
+### What the Demo Demonstrates
+1. **Worker Pool Pattern**: Creates a fixed number of worker goroutines
+2. **Channel Communication**: Uses channels to distribute tasks and collect results
+3. **Synchronization**: Uses sync.WaitGroup to coordinate worker completion
+4. **Ordered Output**: Maintains task order despite concurrent processing
+5. **Resource Management**: Limits concurrent operations to prevent resource exhaustion
 
 ## Getting Started
 
@@ -390,15 +449,17 @@ When working on this project:
 
 **Using Make (Linux/macOS - Recommended):**
 ```bash
-make help          # Show available commands
-make build         # Build the application
-make run           # Run the application
-make test          # Run tests
-make test-coverage # Run tests with coverage report
-make docs          # Generate Swagger documentation
-make docs-serve    # Generate docs and start server
-make docker-build  # Build Docker image
-make docker-dev    # Run development environment
+make help           # Show available commands
+make build          # Build the payment service (default)
+make build-worker   # Build the worker pool demo
+make run            # Run the payment service (default)
+make run-worker     # Run the worker pool demo
+make test           # Run tests
+make test-coverage  # Run tests with coverage report
+make docs           # Generate Swagger documentation
+make docs-serve     # Generate docs and start server
+make docker-build   # Build Docker image
+make docker-dev     # Run development environment
 ```
 
 **Using Scripts (Cross-platform):**
@@ -406,7 +467,10 @@ make docker-dev    # Run development environment
 *Windows PowerShell:*
 ```powershell
 .\scripts\build\build.ps1 help          # Show available commands
-.\scripts\build\build.ps1 run           # Run the application
+.\scripts\build\build.ps1 run           # Run the payment service (default)
+.\scripts\build\build.ps1 run-worker    # Run the worker pool demo
+.\scripts\build\build.ps1 build         # Build the payment service (default)
+.\scripts\build\build.ps1 build-worker  # Build the worker pool demo
 .\scripts\build\build.ps1 test          # Run tests
 .\scripts\build\build.ps1 docs          # Generate documentation
 
@@ -417,7 +481,10 @@ make docker-dev    # Run development environment
 *Windows Command Prompt:*
 ```cmd
 scripts\build\build.bat help             # Show available commands
-scripts\build\build.bat run              # Run the application
+scripts\build\build.bat run              # Run the payment service (default)
+scripts\build\build.bat run-worker       # Run the worker pool demo
+scripts\build\build.bat build            # Build the payment service (default)
+scripts\build\build.bat build-worker     # Build the worker pool demo
 
 # Or use convenience script:
 build.bat run                            # Calls scripts\build\build.bat
@@ -426,7 +493,10 @@ build.bat run                            # Calls scripts\build\build.bat
 *Linux/macOS:*
 ```bash
 ./scripts/build/build.sh help            # Show available commands
-./scripts/build/build.sh run             # Run the application
+./scripts/build/build.sh run             # Run the payment service (default)
+./scripts/build/build.sh run-worker      # Run the worker pool demo
+./scripts/build/build.sh build           # Build the payment service (default)
+./scripts/build/build.sh build-worker    # Build the worker pool demo
 ./scripts/build/build.sh test            # Run tests
 
 # Or use convenience script:
@@ -435,14 +505,20 @@ build.bat run                            # Calls scripts\build\build.bat
 
 **Direct Go Commands (Universal):**
 ```bash
-# Run the application
+# Run the payment service (default)
 go run cmd/server/main.go
+
+# Run the worker pool demo
+go run cmd/worker/main.go
 
 # Run tests
 go test ./...
 
-# Build binary
+# Build payment service binary
 go build -o bin/payment-service cmd/server/main.go
+
+# Build worker pool demo binary
+go build -o bin/worker-pool cmd/worker/main.go
 
 # Generate documentation (requires swag)
 swag init -g cmd/server/main.go -o docs
